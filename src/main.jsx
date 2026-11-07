@@ -12,6 +12,7 @@ import './mobile-polish.css'
 import './mobile-nav-compact.css'
 import './mobile-final.css'
 import './compatibility-audit.css'
+import './product-details.css'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
