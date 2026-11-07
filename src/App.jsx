@@ -8,7 +8,8 @@ const LOGO_URL = LOGO_DATA_URL
 const standardSizes = ['50', '52', '54', '56', '57']
 
 // Optional per-product fields (only B2 uses them so far):
-// photo: { src, width, height }, price and shaylaPrice in OMR, colorOnRequest: show the color note.
+// photo: { src, width, height }, price and shaylaPrice in OMR,
+// colorOnRequest: show the color note and keep a blank garment color language-neutral in the bag.
 const products = [
   { code: 'A1', category: 'occasion', tone: 'plum' },
   { code: 'A2', category: 'occasion', tone: 'gold' },
@@ -314,7 +315,9 @@ function App() {
   const addToCart = () => {
     if (!activeProduct) return
     const chosenSize = size === 'custom' ? customSize.trim() || t.customSize : size
-    const chosenColor = color.trim() || (rtl ? 'يُحدد عبر واتساب' : 'To be confirmed on WhatsApp')
+    // B2 keeps a blank garment color as '' and labels it in the current language when shown,
+    // so the same choice still groups after a language switch. Other products are unchanged.
+    const chosenColor = color.trim() || (activeProduct.colorOnRequest ? '' : t.confirmOnWhatsApp)
     const hasShaylaOption = Boolean(activeProduct.shaylaPrice)
     const shayla = hasShaylaOption && withShayla
     // A deselected shayla carries no color. A blank one stays '' and shows as "to be confirmed".
@@ -362,8 +365,8 @@ function App() {
     const lines = cart.map((item, index) => {
       const category = item.category === 'occasion' ? (rtl ? 'مناسبات' : 'Occasion') : (rtl ? 'يومي' : 'Everyday')
       const details = rtl
-        ? [`${index + 1}. المنتج ${item.code} — ${category}`, `المقاس: ${item.size}`, `اللون: ${item.color}`]
-        : [`${index + 1}. Product ${item.code} — ${category}`, `Size: ${item.size}`, `Color: ${item.color}`]
+        ? [`${index + 1}. المنتج ${item.code} — ${category}`, `المقاس: ${item.size}`, `اللون: ${item.color || labels.confirmOnWhatsApp}`]
+        : [`${index + 1}. Product ${item.code} — ${category}`, `Size: ${item.size}`, `Color: ${item.color || labels.confirmOnWhatsApp}`]
       if (typeof item.shayla === 'boolean') details.push(`${labels.shayla}: ${item.shayla ? labels.shaylaYes : labels.shaylaNo}`)
       if (item.shayla) details.push(`${labels.shaylaColorShort}: ${item.shaylaColor || labels.confirmOnWhatsApp}`)
       if (item.unitPrice != null) details.push(`${labels.unitPrice}: ${formatPrice(item.unitPrice)}`)
@@ -654,7 +657,7 @@ function App() {
             <article className="cart-item" key={item.key}>
               <div className="cart-item-code">{item.code}</div>
               <div className="cart-item-info">
-                <strong>{item.code}</strong><span>{t.size}: {item.size}</span><span>{t.color}: {item.color}</span>
+                <strong>{item.code}</strong><span>{t.size}: {item.size}</span><span>{t.color}: {item.color || t.confirmOnWhatsApp}</span>
                 {typeof item.shayla === 'boolean' && <span>{t.shayla}: {item.shayla ? t.shaylaYes : t.shaylaNo}</span>}
                 {item.shayla && <span>{t.shaylaColor}: {item.shaylaColor || t.confirmOnWhatsApp}</span>}
                 {item.unitPrice != null && <span>{t.unitPrice}: <bdi>{formatPrice(item.unitPrice)}</bdi></span>}
