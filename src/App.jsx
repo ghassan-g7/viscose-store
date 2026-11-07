@@ -15,7 +15,8 @@ const standardSizes = ['50', '52', '54', '56', '57']
 // Optional per-product fields (A1, A2, B1 and B2 use them so far):
 // photo: { src, width, height, position? }; position is a CSS object-position focal point
 //   (default '50% 10%' in product-details.css).
-// video: { src, width, height }: offered in the product details, loaded only when requested.
+// video: { src, width, height }: offered in the product details, loaded only when requested and
+//   played silently on a loop (the file has no audio track).
 // price in OMR;
 // shayla: { price, detail?, size? }: an optional shayla for `price` OMR. With `detail` ('color' or
 //   'fabric'; labels in copy.*.shaylaDetails) the customer can describe it once it is selected;
@@ -665,7 +666,8 @@ function App() {
             <button className="modal-close" type="button" onClick={() => setActiveProduct(null)} aria-label={t.close}>×</button>
             <div className={`modal-art product-visual--${activeProduct.tone}${activeProduct.photo ? ' modal-art--photo' : ''}${showVideo ? ' modal-art--video' : ''}`}>
               {showVideo && activeProduct.video ? (
-                // Mounted only on request, so the video is not downloaded until then.
+                // Mounted only on request, so the video is not downloaded until then. It plays
+                // silently and repeats in place until the customer switches back to the photo.
                 <video
                   className="modal-video"
                   src={activeProduct.video.src}
@@ -675,6 +677,8 @@ function App() {
                   aria-label={t.productVideo(activeProduct.code)}
                   controls
                   autoPlay
+                  muted
+                  loop
                   playsInline
                   preload="auto"
                 />
