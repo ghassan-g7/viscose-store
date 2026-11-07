@@ -1,17 +1,35 @@
 import { useEffect, useMemo, useState } from 'react'
 import LOGO_DATA_URL from './logoData'
+import b2Photo from './assets/products/b2.webp'
 
 const WHATSAPP_NUMBER = '96892708027'
 const INSTAGRAM_URL = 'https://www.instagram.com/viscose_design'
 const LOGO_URL = LOGO_DATA_URL
 const standardSizes = ['50', '52', '54', '56', '57']
 
+// Optional per-product fields (only B2 uses them so far):
+// photo: { src, width, height }, price and shaylaPrice in OMR, colorOnRequest: show the color note.
 const products = [
   { code: 'A1', category: 'occasion', tone: 'plum' },
   { code: 'A2', category: 'occasion', tone: 'gold' },
   { code: 'B1', category: 'occasion', tone: 'sand' },
-  { code: 'B2', category: 'everyday', tone: 'ivory' },
+  {
+    code: 'B2',
+    category: 'everyday',
+    tone: 'ivory',
+    photo: { src: b2Photo, width: 900, height: 1145 },
+    price: 32,
+    shaylaPrice: 2,
+    colorOnRequest: true,
+  },
 ]
+
+const formatPrice = (amount) => `${amount} OMR`
+
+function unitPriceFor(product, withShayla) {
+  if (product.price == null) return null
+  return product.price + (withShayla && product.shaylaPrice ? product.shaylaPrice : 0)
+}
 
 const routes = ['home', 'new', 'collections', 'about', 'fabrics', 'contact']
 
@@ -89,6 +107,18 @@ const copy = {
     homePreviewTitle: 'لمحة من المجموعة',
     homePreviewText: 'ابدئي من أحدث التصاميم، ثم انتقلي لصفحة الجديد لرؤية المجموعة كاملة.',
     seeAll: 'شاهدي الكل',
+    productAlt: {
+      B2: 'مخوار B2 من الدانتيل باللونين الفوشي والبنفسجي، بتطريز ورود على الصدر والأكمام، ويظهر مع شيلة وردية',
+    },
+    colorOnRequest: 'يمكن تغيير اللون حسب الطلب',
+    shaylaOption: 'إضافة شيلة (+٢ ر.ع.)',
+    shayla: 'الشيلة',
+    shaylaYes: 'نعم (+٢ ر.ع.)',
+    shaylaNo: 'لا',
+    shaylaColor: 'لون الشيلة المطلوب',
+    shaylaColorShort: 'لون الشيلة',
+    confirmOnWhatsApp: 'يُحدد عبر واتساب',
+    unitPrice: 'سعر القطعة',
   },
   en: {
     nav: ['Home', 'New', 'Collections', 'About', 'Fabrics', 'Contact'],
@@ -163,6 +193,18 @@ const copy = {
     homePreviewTitle: 'A glimpse of the collection',
     homePreviewText: 'Start with the latest designs, then open New to see the full collection.',
     seeAll: 'See all',
+    productAlt: {
+      B2: 'B2 mukhawar in fuchsia and purple lace with floral embroidery on the chest and sleeves, shown with a pink shayla',
+    },
+    colorOnRequest: 'Color can be changed on request',
+    shaylaOption: 'Add a shayla (+2 OMR)',
+    shayla: 'Shayla',
+    shaylaYes: 'Yes (+2 OMR)',
+    shaylaNo: 'No',
+    shaylaColor: 'Preferred shayla color',
+    shaylaColorShort: 'Shayla color',
+    confirmOnWhatsApp: 'To be confirmed on WhatsApp',
+    unitPrice: 'Unit price',
   },
 }
 
@@ -191,10 +233,24 @@ function ProductGrid({ items, t, selectProduct }) {
     <div className="product-grid">
       {items.map((product, index) => (
         <article className="product-card" key={product.code}>
-          <button className={`product-visual product-visual--${product.tone}`} type="button" onClick={() => selectProduct(product)}>
+          <button className={`product-visual product-visual--${product.tone}${product.photo ? ' product-visual--photo' : ''}`} type="button" onClick={() => selectProduct(product)}>
             <span className="product-index">0{index + 1}</span>
-            <span className="product-code">{product.code}</span>
-            <span className="product-watermark">V</span>
+            {product.photo ? (
+              <img
+                className="product-photo"
+                src={product.photo.src}
+                width={product.photo.width}
+                height={product.photo.height}
+                alt={t.productAlt[product.code]}
+                loading="lazy"
+                decoding="async"
+              />
+            ) : (
+              <>
+                <span className="product-code">{product.code}</span>
+                <span className="product-watermark">V</span>
+              </>
+            )}
           </button>
           <div className="product-meta">
             <div>
@@ -203,7 +259,9 @@ function ProductGrid({ items, t, selectProduct }) {
             </div>
             <button type="button" className="round-arrow" onClick={() => selectProduct(product)} aria-label={`${t.selectProduct} ${product.code}`}>↗</button>
           </div>
-          <span className="price-placeholder">{t.priceSoon}</span>
+          {product.price == null
+            ? <span className="price-placeholder">{t.priceSoon}</span>
+            : <bdi className="product-price">{formatPrice(product.price)}</bdi>}
         </article>
       ))}
     </div>
@@ -218,6 +276,8 @@ function App() {
   const [size, setSize] = useState('52')
   const [customSize, setCustomSize] = useState('')
   const [color, setColor] = useState('')
+  const [withShayla, setWithShayla] = useState(false)
+  const [shaylaColor, setShaylaColor] = useState('')
   const [cart, setCart] = useState([])
   const [cartOpen, setCartOpen] = useState(false)
 
@@ -247,18 +307,39 @@ function App() {
     setSize('52')
     setCustomSize('')
     setColor('')
+    setWithShayla(false)
+    setShaylaColor('')
   }
 
   const addToCart = () => {
     if (!activeProduct) return
     const chosenSize = size === 'custom' ? customSize.trim() || t.customSize : size
     const chosenColor = color.trim() || (rtl ? 'يُحدد عبر واتساب' : 'To be confirmed on WhatsApp')
-    const key = `${activeProduct.code}-${chosenSize}-${chosenColor}`
+    const hasShaylaOption = Boolean(activeProduct.shaylaPrice)
+    const shayla = hasShaylaOption && withShayla
+    // A deselected shayla carries no color. A blank one stays '' and shows as "to be confirmed".
+    const chosenShaylaColor = shayla ? shaylaColor.trim() : null
+    // B2 lines differ by size, garment color, shayla and shayla color. A JSON key keeps the
+    // free-text color fields from colliding the way a hyphen-joined key could.
+    const key = hasShaylaOption
+      ? JSON.stringify([activeProduct.code, chosenSize, chosenColor, shayla, chosenShaylaColor])
+      : `${activeProduct.code}-${chosenSize}-${chosenColor}`
+    const unitPrice = unitPriceFor(activeProduct, shayla)
 
     setCart((current) => {
       const existing = current.find((item) => item.key === key)
       if (existing) return current.map((item) => item.key === key ? { ...item, quantity: item.quantity + 1 } : item)
-      return [...current, { key, code: activeProduct.code, category: activeProduct.category, size: chosenSize, color: chosenColor, quantity: 1 }]
+      return [...current, {
+        key,
+        code: activeProduct.code,
+        category: activeProduct.category,
+        size: chosenSize,
+        color: chosenColor,
+        quantity: 1,
+        ...(hasShaylaOption && { shayla }),
+        ...(shayla && { shaylaColor: chosenShaylaColor }),
+        ...(unitPrice != null && { unitPrice }),
+      }]
     })
 
     setActiveProduct(null)
@@ -277,11 +358,17 @@ function App() {
     const greeting = rtl
       ? 'السلام عليكم، أود طلب المنتجات التالية من Viscose Design:'
       : 'Hello, I would like to order the following from Viscose Design:'
+    const labels = copy[rtl ? 'ar' : 'en']
     const lines = cart.map((item, index) => {
       const category = item.category === 'occasion' ? (rtl ? 'مناسبات' : 'Occasion') : (rtl ? 'يومي' : 'Everyday')
-      return rtl
-        ? `${index + 1}. المنتج ${item.code} — ${category}\nالمقاس: ${item.size}\nاللون: ${item.color}\nالكمية: ${item.quantity}`
-        : `${index + 1}. Product ${item.code} — ${category}\nSize: ${item.size}\nColor: ${item.color}\nQuantity: ${item.quantity}`
+      const details = rtl
+        ? [`${index + 1}. المنتج ${item.code} — ${category}`, `المقاس: ${item.size}`, `اللون: ${item.color}`]
+        : [`${index + 1}. Product ${item.code} — ${category}`, `Size: ${item.size}`, `Color: ${item.color}`]
+      if (typeof item.shayla === 'boolean') details.push(`${labels.shayla}: ${item.shayla ? labels.shaylaYes : labels.shaylaNo}`)
+      if (item.shayla) details.push(`${labels.shaylaColorShort}: ${item.shaylaColor || labels.confirmOnWhatsApp}`)
+      if (item.unitPrice != null) details.push(`${labels.unitPrice}: ${formatPrice(item.unitPrice)}`)
+      details.push(rtl ? `الكمية: ${item.quantity}` : `Quantity: ${item.quantity}`)
+      return details.join('\n')
     })
     const ending = rtl ? 'يرجى تأكيد السعر والتوفر. شكرًا.' : 'Please confirm price and availability. Thank you.'
     return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent([greeting, '', ...lines, '', ending].join('\n'))}`
@@ -501,11 +588,25 @@ function App() {
         <div className="modal-backdrop" role="presentation" onMouseDown={() => setActiveProduct(null)}>
           <section className="product-modal" role="dialog" aria-modal="true" onMouseDown={(event) => event.stopPropagation()}>
             <button className="modal-close" type="button" onClick={() => setActiveProduct(null)} aria-label={t.close}>×</button>
-            <div className={`modal-art product-visual--${activeProduct.tone}`}><span>{activeProduct.code}</span><b>Viscose Design</b></div>
+            <div className={`modal-art product-visual--${activeProduct.tone}${activeProduct.photo ? ' modal-art--photo' : ''}`}>
+              {activeProduct.photo ? (
+                <img
+                  className="modal-photo"
+                  src={activeProduct.photo.src}
+                  width={activeProduct.photo.width}
+                  height={activeProduct.photo.height}
+                  alt={t.productAlt[activeProduct.code]}
+                />
+              ) : (
+                <><span>{activeProduct.code}</span><b>Viscose Design</b></>
+              )}
+            </div>
             <div className="modal-content">
               <p className="eyebrow">{activeProduct.category === 'occasion' ? t.occasion : t.everyday}</p>
               <h2>{activeProduct.code}</h2>
-              <span className="modal-price">{t.priceSoon}</span>
+              {activeProduct.price == null
+                ? <span className="modal-price">{t.priceSoon}</span>
+                : <span className="modal-price modal-price--set" aria-live="polite"><bdi>{formatPrice(unitPriceFor(activeProduct, withShayla))}</bdi></span>}
               <fieldset>
                 <legend>{t.size}</legend>
                 <div className="size-grid">
@@ -516,7 +617,28 @@ function App() {
               {size === 'custom' && (
                 <label className="field"><span>{t.customSize}</span><input value={customSize} onChange={(event) => setCustomSize(event.target.value)} placeholder={t.customSizePlaceholder} /></label>
               )}
-              <label className="field"><span>{t.color}</span><input value={color} onChange={(event) => setColor(event.target.value)} placeholder={t.colorPlaceholder} /></label>
+              <label className={`field${activeProduct.colorOnRequest ? ' field--with-hint' : ''}`}>
+                <span>{t.color}</span>
+                <input
+                  value={color}
+                  onChange={(event) => setColor(event.target.value)}
+                  placeholder={t.colorPlaceholder}
+                  aria-describedby={activeProduct.colorOnRequest ? 'color-on-request' : undefined}
+                />
+              </label>
+              {activeProduct.colorOnRequest && <p className="field-hint" id="color-on-request">{t.colorOnRequest}</p>}
+              {activeProduct.shaylaPrice ? (
+                <label className="shayla-option">
+                  <input type="checkbox" checked={withShayla} onChange={(event) => setWithShayla(event.target.checked)} />
+                  <span>{t.shaylaOption}</span>
+                </label>
+              ) : null}
+              {activeProduct.shaylaPrice && withShayla ? (
+                <label className="field shayla-color-field">
+                  <span>{t.shaylaColor}</span>
+                  <input value={shaylaColor} onChange={(event) => setShaylaColor(event.target.value)} placeholder={t.confirmOnWhatsApp} />
+                </label>
+              ) : null}
               <button className="button button--primary button--full" type="button" onClick={addToCart}>{t.addToBag}</button>
             </div>
           </section>
@@ -533,6 +655,9 @@ function App() {
               <div className="cart-item-code">{item.code}</div>
               <div className="cart-item-info">
                 <strong>{item.code}</strong><span>{t.size}: {item.size}</span><span>{t.color}: {item.color}</span>
+                {typeof item.shayla === 'boolean' && <span>{t.shayla}: {item.shayla ? t.shaylaYes : t.shaylaNo}</span>}
+                {item.shayla && <span>{t.shaylaColor}: {item.shaylaColor || t.confirmOnWhatsApp}</span>}
+                {item.unitPrice != null && <span>{t.unitPrice}: <bdi>{formatPrice(item.unitPrice)}</bdi></span>}
                 <div className="quantity-controls"><button type="button" onClick={() => changeQuantity(item.key, -1)}>−</button><span>{item.quantity}</span><button type="button" onClick={() => changeQuantity(item.key, 1)}>+</button></div>
                 <button className="remove-button" type="button" onClick={() => removeItem(item.key)}>{t.remove}</button>
               </div>
