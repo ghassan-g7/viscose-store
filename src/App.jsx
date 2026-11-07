@@ -19,7 +19,7 @@ const standardSizes = ['50', '52', '54', '56', '57']
 // price in OMR;
 // shayla: { price, detail?, size? }: an optional shayla for `price` OMR. With `detail` ('color' or
 //   'fabric'; labels in copy.*.shaylaDetails) the customer can describe it once it is selected;
-//   `size` names a fixed shayla size (labels in copy.*.shaylaSizes) and asks for nothing more.
+//   `size` names a fixed shayla size (labels in copy.*.shaylaSizes). The two can be combined (A2).
 // colorOnRequest: show the "color can be changed on request" note under the garment color.
 // Products with a shayla option store blank choices as '' and label them in the current language
 // when shown, so identical choices group into one line across a language switch.
@@ -40,7 +40,7 @@ const products = [
     photo: { src: a2Photo, width: 900, height: 1587, position: '50% 30%' },
     video: { src: a2Video, width: 720, height: 1280 },
     price: 48,
-    shayla: { price: 3, size: 'liso' },
+    shayla: { price: 3, size: 'liso', detail: 'color' },
     colorOnRequest: true,
   },
   {
@@ -385,8 +385,7 @@ function App() {
     const chosenSize = size === 'custom' ? customSize.trim() || blankValue(t.customSize) : size
     const chosenColor = color.trim() || blankValue(t.confirmOnWhatsApp)
     const shayla = hasShaylaOption && withShayla
-    // A deselected shayla carries no detail (A1/B2 color, B1 fabric). A blank one stays ''.
-    // A fixed-size shayla (A2) has no detail at all.
+    // A deselected shayla carries no detail (A1/A2/B2 color, B1 fabric). A blank one stays ''.
     const chosenShaylaDetail = shayla && shaylaConfig.detail ? shaylaDetail.trim() : null
     // These lines differ by size, garment color, shayla and its detail. A JSON key keeps the
     // free-text fields from colliding the way a hyphen-joined key could.
