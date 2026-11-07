@@ -667,6 +667,7 @@ function App() {
               {showVideo && activeProduct.video ? (
                 // Mounted only on request, so the video is not downloaded until then. It plays
                 // silently and repeats in place until the customer switches back to the photo.
+                // No browser controls (or cast button) cover the garment; "Show photo" stops it.
                 <video
                   className="modal-video"
                   src={activeProduct.video.src}
@@ -674,11 +675,11 @@ function App() {
                   height={activeProduct.video.height}
                   poster={activeProduct.photo?.src}
                   aria-label={t.productVideo(activeProduct.code)}
-                  controls
                   autoPlay
                   muted
                   loop
                   playsInline
+                  disableRemotePlayback
                   preload="auto"
                 />
               ) : activeProduct.photo ? (
