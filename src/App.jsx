@@ -3,6 +3,7 @@ import LOGO_DATA_URL from './logoData'
 import a1Photo from './assets/products/a1.webp'
 import b1Photo from './assets/products/b1.webp'
 import b2Photo from './assets/products/b2.webp'
+import { whatsAppOrderUrl } from './whatsapp'
 
 const WHATSAPP_NUMBER = '96892708027'
 const INSTAGRAM_URL = 'https://www.instagram.com/viscose_design'
@@ -407,7 +408,9 @@ function App() {
       return details.join('\n')
     })
     const ending = rtl ? 'يرجى تأكيد السعر والتوفر. شكرًا.' : 'Please confirm price and availability. Thank you.'
-    return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent([greeting, '', ...lines, '', ending].join('\n'))}`
+    // The final, device-specific link comes straight from the current message, so it stays
+    // correct after quantity, item or language changes.
+    return whatsAppOrderUrl(WHATSAPP_NUMBER, [greeting, '', ...lines, '', ending].join('\n'))
   }, [cart, rtl])
 
   const filteredProducts = collectionFilter === 'occasion'
