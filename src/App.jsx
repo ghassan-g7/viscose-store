@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import LOGO_DATA_URL from './logoData'
+import a1Photo from './assets/products/a1.webp'
 import b1Photo from './assets/products/b1.webp'
 import b2Photo from './assets/products/b2.webp'
 
@@ -8,7 +9,7 @@ const INSTAGRAM_URL = 'https://www.instagram.com/viscose_design'
 const LOGO_URL = LOGO_DATA_URL
 const standardSizes = ['50', '52', '54', '56', '57']
 
-// Optional per-product fields (B1 and B2 use them so far):
+// Optional per-product fields (A1, B1 and B2 use them so far):
 // photo: { src, width, height }; price in OMR;
 // shayla: { price, detail }: an optional shayla for `price` OMR. Once it is selected the customer
 //   can describe its `detail` ('color' or 'fabric'; labels in copy.*.shaylaDetails).
@@ -16,7 +17,14 @@ const standardSizes = ['50', '52', '54', '56', '57']
 // Products with a shayla option store blank choices as '' and label them in the current language
 // when shown, so identical choices group into one line across a language switch.
 const products = [
-  { code: 'A1', category: 'occasion', tone: 'plum' },
+  {
+    code: 'A1',
+    category: 'occasion',
+    tone: 'plum',
+    photo: { src: a1Photo, width: 900, height: 1598 },
+    price: 36,
+    shayla: { price: 2, detail: 'color' },
+  },
   { code: 'A2', category: 'occasion', tone: 'gold' },
   {
     code: 'B1',
@@ -121,6 +129,7 @@ const copy = {
     homePreviewText: 'ابدئي من أحدث التصاميم، ثم انتقلي لصفحة الجديد لرؤية المجموعة كاملة.',
     seeAll: 'شاهدي الكل',
     productAlt: {
+      A1: 'مخوار A1 أزرق فاتح بتطريز على الصدر والأساور',
       B1: 'مخوار B1 بقماش زيتوني بنقشة ورود برتقالية، وتطريز ذهبي وليلكي حول الرقبة والأكمام، ويظهر مع شيلة بنفسجية داكنة',
       B2: 'مخوار B2 من الدانتيل باللونين الفوشي والبنفسجي، بتطريز ورود على الصدر والأكمام، ويظهر مع شيلة وردية',
     },
@@ -210,6 +219,7 @@ const copy = {
     homePreviewText: 'Start with the latest designs, then open New to see the full collection.',
     seeAll: 'See all',
     productAlt: {
+      A1: 'Light blue A1 mukhawar with embroidery on the bodice and cuffs',
       B1: 'B1 mukhawar in olive fabric with an orange floral print and gold and lilac embroidery around the neckline and cuffs, shown with a dark plum shayla',
       B2: 'B2 mukhawar in fuchsia and purple lace with floral embroidery on the chest and sleeves, shown with a pink shayla',
     },
