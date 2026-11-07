@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import LOGO_DATA_URL from './logoData'
 import a1Photo from './assets/products/a1.webp'
+import a2Photo from './assets/products/a2.webp'
+import a2Video from './assets/products/a2.mp4'
 import b1Photo from './assets/products/b1.webp'
 import b2Photo from './assets/products/b2.webp'
 import { whatsAppOrderUrl } from './whatsapp'
@@ -10,10 +12,14 @@ const INSTAGRAM_URL = 'https://www.instagram.com/viscose_design'
 const LOGO_URL = LOGO_DATA_URL
 const standardSizes = ['50', '52', '54', '56', '57']
 
-// Optional per-product fields (A1, B1 and B2 use them so far):
-// photo: { src, width, height }; price in OMR;
-// shayla: { price, detail }: an optional shayla for `price` OMR. Once it is selected the customer
-//   can describe its `detail` ('color' or 'fabric'; labels in copy.*.shaylaDetails).
+// Optional per-product fields (A1, A2, B1 and B2 use them so far):
+// photo: { src, width, height, position? }; position is a CSS object-position focal point
+//   (default '50% 10%' in product-details.css).
+// video: { src, width, height }: offered in the product details, loaded only when requested.
+// price in OMR;
+// shayla: { price, detail?, size? }: an optional shayla for `price` OMR. With `detail` ('color' or
+//   'fabric'; labels in copy.*.shaylaDetails) the customer can describe it once it is selected;
+//   `size` names a fixed shayla size (labels in copy.*.shaylaSizes) and asks for nothing more.
 // colorOnRequest: show the "color can be changed on request" note under the garment color.
 // Products with a shayla option store blank choices as '' and label them in the current language
 // when shown, so identical choices group into one line across a language switch.
@@ -26,7 +32,17 @@ const products = [
     price: 36,
     shayla: { price: 2, detail: 'color' },
   },
-  { code: 'A2', category: 'occasion', tone: 'gold' },
+  {
+    code: 'A2',
+    category: 'occasion',
+    tone: 'gold',
+    // The floral yoke sits lower in this photo, so focus lower to keep it in short crops.
+    photo: { src: a2Photo, width: 900, height: 1587, position: '50% 30%' },
+    video: { src: a2Video, width: 720, height: 1280 },
+    price: 48,
+    shayla: { price: 3, size: 'liso' },
+    colorOnRequest: true,
+  },
   {
     code: 'B1',
     category: 'occasion',
@@ -47,6 +63,8 @@ const products = [
 ]
 
 const formatPrice = (amount) => `${amount} OMR`
+const toArabicDigits = (value) => String(value).replace(/\d/g, (digit) => '٠١٢٣٤٥٦٧٨٩'[digit])
+const shaylaSizeLabel = (labels, sizeKey) => (sizeKey ? labels.shaylaSizes[sizeKey] : null)
 
 function unitPriceFor(product, withShayla) {
   if (product.price == null) return null
@@ -66,7 +84,7 @@ const copy = {
     aboutCta: 'عن فسكوز',
     newEyebrow: 'وصل حديثًا',
     newTitle: 'أحدث التصاميم',
-    newText: 'أربع تصاميم أولية، وصور المنتجات والأسعار ستُضاف عند تجهيزها.',
+    newText: 'تصفّحي التصاميم واختاري المقاس واللون المناسب لكِ.',
     priceSoon: 'السعر يُضاف قريبًا',
     occasion: 'مناسبات',
     everyday: 'يومي',
@@ -131,14 +149,20 @@ const copy = {
     seeAll: 'شاهدي الكل',
     productAlt: {
       A1: 'مخوار A1 أزرق فاتح بتطريز على الصدر والأساور',
+      A2: 'مخوار A2 أصفر خردلي بتطريز زهور على الصدر والأساور',
       B1: 'مخوار B1 بقماش زيتوني بنقشة ورود برتقالية، وتطريز ذهبي وليلكي حول الرقبة والأكمام، ويظهر مع شيلة بنفسجية داكنة',
       B2: 'مخوار B2 من الدانتيل باللونين الفوشي والبنفسجي، بتطريز ورود على الصدر والأكمام، ويظهر مع شيلة وردية',
     },
     colorOnRequest: 'يمكن تغيير اللون حسب الطلب',
-    shaylaOption: 'إضافة شيلة (+٢ ر.ع.)',
+    // Add-on labels follow each product's configured shayla price and optional fixed size.
+    shaylaOption: (price, size) => `إضافة شيلة${size ? ` (${size.label})` : ''} (+${toArabicDigits(price)} ر.ع.)`,
     shayla: 'الشيلة',
-    shaylaYes: 'نعم (+٢ ر.ع.)',
+    shaylaYes: (price, size) => `نعم${size ? `، ${size.label}` : ''} (+${toArabicDigits(price)} ر.ع.)`,
     shaylaNo: 'لا',
+    shaylaSizes: { liso: { label: 'مقاس ليسو' } },
+    watchVideo: 'شاهدي الفيديو',
+    showPhoto: 'عرض الصورة',
+    productVideo: (code) => `فيديو مخوار ${code}`,
     shaylaDetails: {
       color: { label: 'لون الشيلة المطلوب', short: 'لون الشيلة' },
       fabric: { label: 'قماش الشيلة المطلوب', short: 'قماش الشيلة', note: 'يمكن تغيير القماش حسب الطلب وتأكيده عبر واتساب' },
@@ -156,7 +180,7 @@ const copy = {
     aboutCta: 'About Viscose',
     newEyebrow: 'Just arrived',
     newTitle: 'New designs',
-    newText: 'Four initial designs. Final product photography and prices will be added when ready.',
+    newText: 'Explore the designs and choose your preferred size and color.',
     priceSoon: 'Price coming soon',
     occasion: 'Occasion',
     everyday: 'Everyday',
@@ -221,14 +245,19 @@ const copy = {
     seeAll: 'See all',
     productAlt: {
       A1: 'Light blue A1 mukhawar with embroidery on the bodice and cuffs',
+      A2: 'Mustard-yellow A2 mukhawar with floral embroidery on the bodice and cuffs',
       B1: 'B1 mukhawar in olive fabric with an orange floral print and gold and lilac embroidery around the neckline and cuffs, shown with a dark plum shayla',
       B2: 'B2 mukhawar in fuchsia and purple lace with floral embroidery on the chest and sleeves, shown with a pink shayla',
     },
     colorOnRequest: 'Color can be changed on request',
-    shaylaOption: 'Add a shayla (+2 OMR)',
+    shaylaOption: (price, size) => `Add a ${size ? `${size.adjective} ` : ''}shayla (+${price} OMR)`,
     shayla: 'Shayla',
-    shaylaYes: 'Yes (+2 OMR)',
+    shaylaYes: (price, size) => `Yes${size ? `, ${size.label}` : ''} (+${price} OMR)`,
     shaylaNo: 'No',
+    shaylaSizes: { liso: { label: 'Liso size', adjective: 'Liso-size' } },
+    watchVideo: 'Watch video',
+    showPhoto: 'Show photo',
+    productVideo: (code) => `${code} mukhawar video`,
     shaylaDetails: {
       color: { label: 'Preferred shayla color', short: 'Shayla color' },
       fabric: { label: 'Preferred shayla fabric', short: 'Shayla fabric', note: 'Fabric can be changed on request and confirmed on WhatsApp' },
@@ -271,6 +300,7 @@ function ProductGrid({ items, t, selectProduct }) {
                 src={product.photo.src}
                 width={product.photo.width}
                 height={product.photo.height}
+                style={product.photo.position ? { objectPosition: product.photo.position } : undefined}
                 alt={t.productAlt[product.code]}
                 loading="lazy"
                 decoding="async"
@@ -308,13 +338,14 @@ function App() {
   const [color, setColor] = useState('')
   const [withShayla, setWithShayla] = useState(false)
   const [shaylaDetail, setShaylaDetail] = useState('')
+  const [showVideo, setShowVideo] = useState(false)
   const [cart, setCart] = useState([])
   const [cartOpen, setCartOpen] = useState(false)
 
   const t = copy[lang]
   const rtl = lang === 'ar'
   const cartCount = useMemo(() => cart.reduce((sum, item) => sum + item.quantity, 0), [cart])
-  const shaylaCopy = activeProduct?.shayla ? t.shaylaDetails[activeProduct.shayla.detail] : null
+  const shaylaCopy = activeProduct?.shayla?.detail ? t.shaylaDetails[activeProduct.shayla.detail] : null
 
   useEffect(() => {
     const onHashChange = () => {
@@ -340,20 +371,23 @@ function App() {
     setColor('')
     setWithShayla(false)
     setShaylaDetail('')
+    setShowVideo(false)
   }
 
   const addToCart = () => {
     if (!activeProduct) return
-    const hasShaylaOption = Boolean(activeProduct.shayla)
-    // Products with a shayla option (B1, B2) keep blank choices as '' and label them in the
-    // current language when shown, so the same choice still groups after a language switch.
+    const shaylaConfig = activeProduct.shayla
+    const hasShaylaOption = Boolean(shaylaConfig)
+    // Products with a shayla option keep blank choices as '' and label them in the current
+    // language when shown, so the same choice still groups after a language switch.
     // Other products keep storing the localized fallback.
     const blankValue = (fallback) => (hasShaylaOption ? '' : fallback)
     const chosenSize = size === 'custom' ? customSize.trim() || blankValue(t.customSize) : size
     const chosenColor = color.trim() || blankValue(t.confirmOnWhatsApp)
     const shayla = hasShaylaOption && withShayla
-    // A deselected shayla carries no detail (B2's color, B1's fabric). A blank one stays ''.
-    const chosenShaylaDetail = shayla ? shaylaDetail.trim() : null
+    // A deselected shayla carries no detail (A1/B2 color, B1 fabric). A blank one stays ''.
+    // A fixed-size shayla (A2) has no detail at all.
+    const chosenShaylaDetail = shayla && shaylaConfig.detail ? shaylaDetail.trim() : null
     // These lines differ by size, garment color, shayla and its detail. A JSON key keeps the
     // free-text fields from colliding the way a hyphen-joined key could.
     const key = hasShaylaOption
@@ -372,7 +406,9 @@ function App() {
         color: chosenColor,
         quantity: 1,
         ...(hasShaylaOption && { shayla }),
-        ...(shayla && { shaylaDetailType: activeProduct.shayla.detail, shaylaDetail: chosenShaylaDetail }),
+        ...(shayla && { shaylaPrice: shaylaConfig.price }),
+        ...(shayla && shaylaConfig.size && { shaylaSize: shaylaConfig.size }),
+        ...(shayla && shaylaConfig.detail && { shaylaDetailType: shaylaConfig.detail, shaylaDetail: chosenShaylaDetail }),
         ...(unitPrice != null && { unitPrice }),
       }]
     })
@@ -401,8 +437,8 @@ function App() {
       const details = rtl
         ? [`${index + 1}. المنتج ${item.code} — ${category}`, `المقاس: ${sizeText}`, `اللون: ${colorText}`]
         : [`${index + 1}. Product ${item.code} — ${category}`, `Size: ${sizeText}`, `Color: ${colorText}`]
-      if (typeof item.shayla === 'boolean') details.push(`${labels.shayla}: ${item.shayla ? labels.shaylaYes : labels.shaylaNo}`)
-      if (item.shayla) details.push(`${labels.shaylaDetails[item.shaylaDetailType].short}: ${item.shaylaDetail || labels.confirmOnWhatsApp}`)
+      if (typeof item.shayla === 'boolean') details.push(`${labels.shayla}: ${item.shayla ? labels.shaylaYes(item.shaylaPrice, shaylaSizeLabel(labels, item.shaylaSize)) : labels.shaylaNo}`)
+      if (item.shayla && item.shaylaDetailType) details.push(`${labels.shaylaDetails[item.shaylaDetailType].short}: ${item.shaylaDetail || labels.confirmOnWhatsApp}`)
       if (item.unitPrice != null) details.push(`${labels.unitPrice}: ${formatPrice(item.unitPrice)}`)
       details.push(rtl ? `الكمية: ${item.quantity}` : `Quantity: ${item.quantity}`)
       return details.join('\n')
@@ -627,17 +663,37 @@ function App() {
         <div className="modal-backdrop" role="presentation" onMouseDown={() => setActiveProduct(null)}>
           <section className="product-modal" role="dialog" aria-modal="true" onMouseDown={(event) => event.stopPropagation()}>
             <button className="modal-close" type="button" onClick={() => setActiveProduct(null)} aria-label={t.close}>×</button>
-            <div className={`modal-art product-visual--${activeProduct.tone}${activeProduct.photo ? ' modal-art--photo' : ''}`}>
-              {activeProduct.photo ? (
+            <div className={`modal-art product-visual--${activeProduct.tone}${activeProduct.photo ? ' modal-art--photo' : ''}${showVideo ? ' modal-art--video' : ''}`}>
+              {showVideo && activeProduct.video ? (
+                // Mounted only on request, so the video is not downloaded until then.
+                <video
+                  className="modal-video"
+                  src={activeProduct.video.src}
+                  width={activeProduct.video.width}
+                  height={activeProduct.video.height}
+                  poster={activeProduct.photo?.src}
+                  aria-label={t.productVideo(activeProduct.code)}
+                  controls
+                  autoPlay
+                  playsInline
+                  preload="auto"
+                />
+              ) : activeProduct.photo ? (
                 <img
                   className="modal-photo"
                   src={activeProduct.photo.src}
                   width={activeProduct.photo.width}
                   height={activeProduct.photo.height}
+                  style={activeProduct.photo.position ? { objectPosition: activeProduct.photo.position } : undefined}
                   alt={t.productAlt[activeProduct.code]}
                 />
               ) : (
                 <><span>{activeProduct.code}</span><b>Viscose Design</b></>
+              )}
+              {activeProduct.video && (
+                <button className="media-toggle" type="button" aria-pressed={showVideo} onClick={() => setShowVideo((current) => !current)}>
+                  {showVideo ? t.showPhoto : <><span aria-hidden="true">▶</span> {t.watchVideo}</>}
+                </button>
               )}
             </div>
             <div className="modal-content">
@@ -669,10 +725,10 @@ function App() {
               {activeProduct.shayla ? (
                 <label className="shayla-option">
                   <input type="checkbox" checked={withShayla} onChange={(event) => setWithShayla(event.target.checked)} />
-                  <span>{t.shaylaOption}</span>
+                  <span>{t.shaylaOption(activeProduct.shayla.price, shaylaSizeLabel(t, activeProduct.shayla.size))}</span>
                 </label>
               ) : null}
-              {activeProduct.shayla && withShayla ? (
+              {shaylaCopy && withShayla ? (
                 <>
                   <label className={`field shayla-detail-field${shaylaCopy.note ? ' field--with-hint' : ''}`}>
                     <span>{shaylaCopy.label}</span>
@@ -702,8 +758,8 @@ function App() {
               <div className="cart-item-code">{item.code}</div>
               <div className="cart-item-info">
                 <strong>{item.code}</strong><span>{t.size}: {item.size || t.customSize}</span><span>{t.color}: {item.color || t.confirmOnWhatsApp}</span>
-                {typeof item.shayla === 'boolean' && <span>{t.shayla}: {item.shayla ? t.shaylaYes : t.shaylaNo}</span>}
-                {item.shayla && <span>{t.shaylaDetails[item.shaylaDetailType].label}: {item.shaylaDetail || t.confirmOnWhatsApp}</span>}
+                {typeof item.shayla === 'boolean' && <span>{t.shayla}: {item.shayla ? t.shaylaYes(item.shaylaPrice, shaylaSizeLabel(t, item.shaylaSize)) : t.shaylaNo}</span>}
+                {item.shayla && item.shaylaDetailType && <span>{t.shaylaDetails[item.shaylaDetailType].label}: {item.shaylaDetail || t.confirmOnWhatsApp}</span>}
                 {item.unitPrice != null && <span>{t.unitPrice}: <bdi>{formatPrice(item.unitPrice)}</bdi></span>}
                 <div className="quantity-controls"><button type="button" onClick={() => changeQuantity(item.key, -1)}>−</button><span>{item.quantity}</span><button type="button" onClick={() => changeQuantity(item.key, 1)}>+</button></div>
                 <button className="remove-button" type="button" onClick={() => removeItem(item.key)}>{t.remove}</button>
