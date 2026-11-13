@@ -26,13 +26,6 @@ function syncDocumentLanguage() {
 }
 
 function syncSemanticCopy() {
-  const footerLabel = document.querySelector('.footer-brand > span')
-  if (footerLabel && footerLabel.textContent !== 'Viscose Design') {
-    footerLabel.textContent = 'Viscose Design'
-  }
-
-  document.querySelector('.hero-index')?.remove()
-
   const bagCount = document.querySelector('.bag-button b')
   if (bagCount) {
     bagCount.setAttribute('aria-live', 'polite')
