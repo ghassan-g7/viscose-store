@@ -50,4 +50,9 @@ Editorial photos: the home hero is the IMG_2724 frame at 1.35 s (`hero-a2`, A2 o
 carved arch: the beaded yoke, sleeves and scalloped cuffs) under a frosted-glass copy panel, and the
 About page uses IMG_2666 (`a1-door`).
 
+On phones and tablets each Collections card is one row with a single photo, a taller 2:3 crop at 320
+and 480 px wide: `a2-cover` (the IMG_2724 frame, hanger to below the cuffs) for Occasion and
+`b2-cover` (B2.HEIC, closer on the garment, from the scarf to below the knee) for Everyday. Desktop
+keeps the full photo strips.
+
 The site is intentionally front-end only. Orders are passed to WhatsApp rather than stored in a backend database.

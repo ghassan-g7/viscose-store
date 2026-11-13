@@ -404,6 +404,28 @@ legend, .field > span { display: block; margin-bottom: 10px; padding: 0; color: 
   .hero__line { font-size: .96rem; }
   .hero__button { width: 100%; min-height: 52px; margin-top: 6px; }
 
+  /* Collections: each card is one compact row, a single photo beside the copy (mirrored by the
+     grid in Arabic). The photo cell is at least 3:4 and grows with the copy; the 2:3 crops fill it. */
+  .collections { grid-auto-rows: 1fr; gap: 12px; }
+  .collection-card {
+    --thumb: clamp(112px, 34vw, 172px);
+    grid-template-columns: var(--thumb) minmax(0, 1fr); gap: 0;
+    border: 1px solid var(--line); background: var(--white);
+    transition: background-color .2s ease, border-color .2s ease;
+  }
+  .collection-card:active { border-color: var(--line-strong); background: var(--cream); }
+  .collection-card__media { position: relative; display: block; min-height: calc(var(--thumb) * 4 / 3); overflow: hidden; background: var(--cream); }
+  .collection-card__media > :not(.collection-card__cover) { display: none; }
+  .collection-card__cover { position: absolute; inset: 0; }
+  .collection-card__cover img { height: 100%; aspect-ratio: auto; object-position: 50% 20%; }
+  .collection-card__body { gap: 6px; padding: 14px clamp(14px, 4.4vw, 24px); }
+  .collection-card__number { display: none; }
+  .collection-card__title { font-size: clamp(1.45rem, 4.2vw, 2rem); text-wrap: balance; }
+  .rtl .collection-card__title { font-size: clamp(1.1rem, 3.2vw, 1.5rem); line-height: 1.5; }
+  .collection-card__text { font-size: clamp(.86rem, 2vw, 1rem); line-height: 1.55; text-wrap: pretty; }
+  .rtl .collection-card__text { line-height: 1.75; }
+  .collection-card .text-link { margin-top: 4px; font-size: .86rem; }
+
   .modal-backdrop { padding: 0; place-items: stretch; }
   /* One scrolling sheet: photo, thumbnails, then the order form, each row sized to its content. */
   .product-modal {
