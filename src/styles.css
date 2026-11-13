@@ -124,35 +124,36 @@ h3 { font-size: 1.08rem; font-weight: 600; line-height: 1.3; }
 }
 
 /* ---------- Home hero ----------
-   The A2 photo carries the opening; a lightly frosted, warm-ivory glass panel holds the copy and
-   overlaps the photo's inner edge only where the crop shows wall or plain sleeve fabric, so the
-   embroidery stays clear. */
-.hero { padding-top: clamp(12px, 1.6vw, 24px); }
-.hero__inner { position: relative; display: grid; }
-.hero__media { grid-row: 1; margin: 0; overflow: hidden; background: var(--sand); }
-.hero__media img { width: 100%; height: 100%; object-fit: cover; }
-.hero__panel {
-  grid-row: 2; position: relative; z-index: 1; display: grid; justify-items: start; gap: 14px;
-  padding: clamp(24px, 3.2vw, 46px);
-  background: rgba(251, 247, 240, .78);
-  -webkit-backdrop-filter: blur(16px) saturate(1.15);
-  backdrop-filter: blur(16px) saturate(1.15);
-  border: 1px solid rgba(255, 255, 255, .7);
-  border-radius: 6px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .55), 0 18px 48px rgba(36, 16, 47, .14);
+   One frosted-glass card holds the A2 photo and the copy side by side (stacked on phones). The
+   card's translucent warm-ivory surface blurs a gentle tonal gradient behind it; the photo sits
+   inside the card, above the glass, so it stays crisp. */
+.hero {
+  padding-block: clamp(14px, 2.4vw, 40px);
+  background:
+    radial-gradient(44% 62% at 8% 16%, rgba(196, 164, 51, .24), transparent 70%),
+    radial-gradient(42% 60% at 94% 86%, rgba(91, 46, 115, .17), transparent 72%),
+    linear-gradient(120deg, #f7efe3 0%, #efe3d2 52%, #e8dac8 100%);
+}
+.hero__card {
+  display: grid; gap: 18px; padding: 10px;
+  background: rgba(255, 252, 247, .5);
+  -webkit-backdrop-filter: blur(22px) saturate(1.25);
+  backdrop-filter: blur(22px) saturate(1.25);
+  border: 1px solid rgba(255, 255, 255, .78);
+  border-radius: 16px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .65), 0 22px 60px rgba(36, 16, 47, .13);
 }
 @supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
-  .hero__panel { background: rgba(251, 247, 240, .95); }
+  .hero__card { background: rgba(255, 252, 247, .9); }
 }
+.hero__media { grid-row: 1; margin: 0; overflow: hidden; border-radius: 10px; background: var(--sand); }
+.hero__media img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 40%; }
+.hero__copy { grid-row: 2; display: grid; justify-items: start; align-content: center; gap: 14px; }
 .hero h1 { font-size: clamp(2.3rem, 3.4vw, 3.25rem); line-height: 1.04; }
 .rtl .hero h1 { font-size: clamp(1.7rem, 2.5vw, 2.4rem); line-height: 1.35; }
-/* A shade darker than --muted: the translucent panel sits a touch darker than the page. */
+/* A shade darker than --muted for comfortable contrast on the glass. */
 .hero__line { max-width: 27rem; color: #5d5148; font-size: 1.04rem; }
 .hero__button { margin-top: 8px; }
-/* Framing. Desktop: the panel covers the photo's inner 10% at mid-height, where the crop shows
-   plain sleeve and wall; the beaded yoke and cuffs stay clear. Phones: the panel covers the
-   bottom band (skirt), below the cuffs. */
-.hero__media img { object-position: 50% 40%; }
 
 .values {
   display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 0;
@@ -356,15 +357,18 @@ legend, .field > span { display: block; margin-bottom: 10px; padding: 0; color: 
 
 /* ---------- Desktop ---------- */
 @media (min-width: 900px) {
-  .hero__inner { display: block; }
-  .hero__media { width: 50%; margin-inline-start: auto; aspect-ratio: .92; max-height: 720px; }
-  /* Overlaps the photo's inner edge by 10% of its width and is centred in the visible part of
-     the photo, so on short laptop screens the copy stays on screen. */
-  .hero__panel {
-    position: absolute; inset-inline-end: 45%; width: min(34rem, 47%);
-    top: calc(min(100%, 100vh - 130px) / 2);
-    top: calc(min(100%, 100svh - 130px) / 2);
-    transform: translateY(-50%);
+  .hero__card {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start;
+    gap: clamp(24px, 3.5vw, 56px); padding: clamp(16px, 1.8vw, 24px);
+  }
+  .hero__media { grid-column: 2; grid-row: 1; aspect-ratio: .92; max-height: 680px; }
+  /* The copy column is as tall as the visible part of the photo, so on short laptop screens,
+     where the card runs a little past the fold, the copy stays centred on screen. */
+  .hero__copy {
+    grid-column: 1; grid-row: 1;
+    height: min(100%, calc(100vh - 180px));
+    height: min(100%, calc(100svh - 180px));
+    padding: 8px clamp(8px, 2.6vw, 40px);
   }
   .order { grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); column-gap: clamp(40px, 6vw, 96px); align-items: start; }
   .order__heading { grid-row: span 2; }
@@ -391,21 +395,14 @@ legend, .field > span { display: block; margin-bottom: 10px; padding: 0; color: 
   .brand-logo--compact { width: 40px; height: 40px; }
   .brand-link__name { font-size: 1.12rem; }
 
-  .hero { padding-top: 0; }
-  .hero__inner { width: 100%; }
-  .hero__media { height: clamp(300px, calc(100vh - 360px), 560px); height: clamp(300px, calc(100svh - 360px), 560px); }
-  /* The panel rises over the photo's bottom band (skirt, not embroidery) and keeps the button
-     inside the first screen. */
-  .hero__panel {
-    margin: calc(-1 * clamp(20px, 6vh, 52px)) var(--gutter) 0;
-    margin-top: calc(-1 * clamp(20px, 6svh, 52px));
-    padding: 20px 20px 22px; gap: 10px;
-  }
+  .hero { padding-block: 12px 20px; }
+  .hero__card { gap: 14px; padding: 10px; border-radius: 14px; }
+  .hero__media { height: clamp(260px, calc(100vh - 430px), 480px); height: clamp(260px, calc(100svh - 430px), 480px); }
+  .hero__copy { gap: 10px; padding: 2px 8px 8px; }
   .hero h1 { font-size: clamp(1.9rem, 7.6vw, 2.4rem); }
   .rtl .hero h1 { font-size: clamp(1.45rem, 5.8vw, 1.8rem); }
   .hero__line { font-size: .96rem; }
   .hero__button { width: 100%; min-height: 52px; margin-top: 6px; }
-  .hero__media img { object-position: 50% 55%; }
 
   .modal-backdrop { padding: 0; place-items: stretch; }
   /* One scrolling sheet: photo, thumbnails, then the order form, each row sized to its content. */

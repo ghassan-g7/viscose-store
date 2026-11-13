@@ -320,14 +320,14 @@ function App() {
       return (
         <main className="page page--home">
           <section className="hero" aria-labelledby="hero-title">
-            <div className="hero__inner shell">
-              <div className="hero__panel">
+            <div className="hero__card shell">
+              <div className="hero__copy">
                 <h1 id="hero-title">{t.heroTitle}</h1>
                 <p className="hero__line">{t.heroText}</p>
                 <a className="button button--primary hero__button" href="#/new">{t.explore}</a>
               </div>
               <figure className="hero__media">
-                <Picture image={images.heroA2} alt={t.heroAlt} sizes="(max-width: 899px) 100vw, 50vw" eager />
+                <Picture image={images.heroA2} alt={t.heroAlt} sizes="(max-width: 899px) 88vw, 46vw" eager />
               </figure>
             </div>
           </section>
