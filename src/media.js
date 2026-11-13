@@ -1,5 +1,5 @@
 // Garment photography and video, processed from copies of the original shoot files
-// (4:5 crops, colour checked, GPS/EXIF stripped; see README "Media"). Each photo is listed with
+// (4:5 crops unless noted, colour checked, GPS/EXIF stripped; see README "Media"). Each photo is listed with
 // all its widths so <img srcSet> can pick one; keep these entries in step with src/assets/media.
 
 import a1Detail240 from './assets/media/a1-detail-240.webp'
@@ -14,6 +14,8 @@ import a1Fit975 from './assets/media/a1-fit-975.webp'
 import a1Main240 from './assets/media/a1-main-240.webp'
 import a1Main640 from './assets/media/a1-main-640.webp'
 import a1Main1080 from './assets/media/a1-main-1080.webp'
+import a2Cover320 from './assets/media/a2-cover-320.webp'
+import a2Cover480 from './assets/media/a2-cover-480.webp'
 import a2Detail240 from './assets/media/a2-detail-240.webp'
 import a2Detail640 from './assets/media/a2-detail-640.webp'
 import a2Detail1080 from './assets/media/a2-detail-1080.webp'
@@ -32,6 +34,8 @@ import b1Front1080 from './assets/media/b1-front-1080.webp'
 import b1Main240 from './assets/media/b1-main-240.webp'
 import b1Main640 from './assets/media/b1-main-640.webp'
 import b1Main1080 from './assets/media/b1-main-1080.webp'
+import b2Cover320 from './assets/media/b2-cover-320.webp'
+import b2Cover480 from './assets/media/b2-cover-480.webp'
 import b2Detail240 from './assets/media/b2-detail-240.webp'
 import b2Detail640 from './assets/media/b2-detail-640.webp'
 import b2Detail1080 from './assets/media/b2-detail-1080.webp'
@@ -69,6 +73,10 @@ export const images = {
   b1Main: picture([[b1Main240, 240], [b1Main640, 640], [b1Main1080, 1080]], 1080, 1350),
   b2Detail: picture([[b2Detail240, 240], [b2Detail640, 640], [b2Detail1080, 1080]], 1080, 1350),
   b2Main: picture([[b2Main240, 240], [b2Main640, 640], [b2Main1080, 1080]], 1080, 1350),
+  // Taller 2:3 crops of the A2 and B2 main shots: the one photo in each Collections row below 900 px,
+  // framed so the garment and its embroidery still read at thumbnail size.
+  a2Cover: picture([[a2Cover320, 320], [a2Cover480, 480]], 480, 720),
+  b2Cover: picture([[b2Cover320, 320], [b2Cover480, 480]], 480, 720),
 }
 
 export const videos = {

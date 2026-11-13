@@ -13,7 +13,12 @@ Front-end storefront for **Viscose Design**, focused on occasion and everyday mu
 - Product details with a photo gallery; A1, A2 and B2 also have a video that plays silently on a loop after "Watch video"
 - Order bag that sends the complete order to WhatsApp
 - Instagram link
-- Responsive layout for desktop and mobile
+- Responsive layout for desktop and mobile; on phones and tablets the header keeps the logo,
+  language switch and order bag on one row, with all six page links in a three-by-two grid below
+- Touch feedback (`src/press-feedback.js`): the moment a finger touches a product, collection or
+  close-up card, a header page link or a filter chip, it lifts slightly with a soft gold glow, which
+  clears on release or as soon as the touch becomes a scroll; the glow alone with reduced motion,
+  and the same glow with an outline for keyboard focus on cards
 
 ## Run locally
 
@@ -49,5 +54,10 @@ it to each product. All files were made from copies of the original shoot files:
 Editorial photos: the home hero is the IMG_2724 frame at 1.35 s (`hero-a2`, A2 on its hanger at the
 carved arch: the beaded yoke, sleeves and scalloped cuffs) under a frosted-glass copy panel, and the
 About page uses IMG_2666 (`a1-door`).
+
+On phones and tablets each Collections card is one frosted-glass row (like the home hero card) with a
+single photo, a taller 2:3 crop at 320 and 480 px wide: `a2-cover` (the IMG_2724 frame, hanger to below the cuffs) for Occasion and
+`b2-cover` (B2.HEIC, closer on the garment, from the scarf to below the knee) for Everyday. Desktop
+keeps the full photo strips.
 
 The site is intentionally front-end only. Orders are passed to WhatsApp rather than stored in a backend database.

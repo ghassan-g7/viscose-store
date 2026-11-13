@@ -194,7 +194,10 @@ h3 { font-size: 1.08rem; font-weight: 600; line-height: 1.3; }
 .product-card__price { font-size: .92rem; font-weight: 600; color: var(--plum); white-space: nowrap; }
 
 .filters { display: flex; flex-wrap: wrap; gap: 8px; }
-.filters a { padding: 8px 18px; border: 1px solid var(--line-strong); border-radius: 999px; font-size: .86rem; transition: border-color .2s ease; }
+.filters a {
+  padding: 8px 18px; border: 1px solid var(--line-strong); border-radius: 999px; font-size: .86rem;
+  transition: border-color .2s ease, transform .26s var(--ease), box-shadow .26s var(--ease);
+}
 .filters a:hover { border-color: var(--plum); }
 .filters a.active { background: var(--plum); border-color: var(--plum); color: #fff; }
 
@@ -239,6 +242,36 @@ h3 { font-size: 1.08rem; font-weight: 600; line-height: 1.3; }
 .rtl .collection-card__title { font-size: clamp(1.45rem, 2.8vw, 2.1rem); line-height: 1.4; }
 .collection-card__text { color: var(--muted); max-width: 26rem; }
 .collection-card:hover img { transform: scale(1.02); }
+
+/* ---------- Pressed and focused cards and links ----------
+   press-feedback.js adds .is-pressed the moment a finger touches a product, collection or close-up
+   card, a page link in the phone header or a filter chip: it lifts slightly and a soft gold glow
+   rings its outer edge (for product and close-up cards the photo, for a collection on phones the
+   whole glass card). The press comes in fast and settles back gently. Keyboard focus gets the
+   same glow with the outline; with reduced motion only the glow is used. Containers that clip
+   (the close-up scroller) keep --press-reach of room around their items. */
+:root {
+  --press-lift: translateY(-3px);
+  --press-lift-small: translateY(-2px);
+  --press-glow: 0 0 0 1px rgba(196, 164, 51, .58), 0 0 16px 2px rgba(196, 164, 51, .42), 0 8px 18px -8px rgba(134, 103, 15, .32);
+  --press-reach: 24px;
+}
+.product-card__link, .collection-card, .detail-tile__media {
+  transition: transform .26s var(--ease), box-shadow .26s var(--ease);
+}
+.product-card__media, .collection-card__media { transition: box-shadow .26s var(--ease); }
+.product-card__link.is-pressed, .collection-card.is-pressed, .detail-tile__media.is-pressed,
+.filters a.is-pressed, .is-pressed .product-card__media, .is-pressed .collection-card__media { transition-duration: .08s; }
+.product-card__link.is-pressed, .collection-card.is-pressed, .detail-tile__media.is-pressed {
+  position: relative; z-index: 1; transform: var(--press-lift);
+}
+.filters a.is-pressed { position: relative; z-index: 1; transform: var(--press-lift-small); }
+.product-card__link.is-pressed .product-card__media,
+.product-card__link:focus-visible .product-card__media,
+.detail-tile__media.is-pressed, .detail-tile__media:focus-visible,
+.collection-card.is-pressed .collection-card__media,
+.collection-card:focus-visible .collection-card__media,
+.filters a.is-pressed { box-shadow: var(--press-glow); }
 
 /* ---------- About ---------- */
 .about { display: grid; gap: 32px; padding-block: clamp(28px, 5vw, 72px) clamp(52px, 8vw, 104px); }
@@ -383,15 +416,25 @@ legend, .field > span { display: block; margin-bottom: 10px; padding: 0; color: 
 
 /* ---------- Tablet & phone ---------- */
 @media (max-width: 899px) {
-  .site-header__inner { padding-top: 8px; min-height: 60px; }
-  .nav {
-    order: 3; width: calc(100% + 2 * var(--gutter)); margin-inline: calc(-1 * var(--gutter));
-    padding: 0 var(--gutter) 10px; gap: 6px; overflow-x: auto; scrollbar-width: none;
+  /* Header: the logo, language switch and order bag share one row; under it the six pages sit in a
+     compact grid, three per row, so every link is visible as soon as any page loads (the grid
+     mirrors itself in Arabic). The current page stays filled in plum. */
+  .site-header__inner {
+    display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center;
+    gap: 6px 12px; min-height: 0; padding-block: 8px;
   }
-  .nav::-webkit-scrollbar { display: none; }
-  .nav a { padding: 6px 13px; border: 1px solid var(--line); border-radius: 999px; font-size: .8rem; }
+  .brand-link { grid-row: 1; grid-column: 1; justify-self: start; min-width: 0; max-width: 100%; overflow: hidden; }
+  .header-actions { grid-row: 1; grid-column: 2; }
+  .nav { grid-row: 2; grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; font-size: .8rem; }
+  .nav a {
+    display: flex; align-items: center; justify-content: center; min-height: 34px; padding: 4px 8px;
+    border: 1px solid var(--line); border-radius: 999px; background: rgba(255, 253, 249, .6);
+    text-align: center; line-height: 1.25; white-space: normal;
+    transition: color .2s ease, background-color .2s ease, border-color .2s ease, transform .26s var(--ease), box-shadow .26s var(--ease);
+  }
   .nav a.active { background: var(--plum); border-color: var(--plum); color: #fff; }
   .nav a.active::after { display: none; }
+  .nav a.is-pressed { z-index: 1; transform: var(--press-lift-small); box-shadow: var(--press-glow); transition-duration: .08s; }
   .brand-logo--compact { width: 40px; height: 40px; }
   .brand-link__name { font-size: 1.12rem; }
 
@@ -403,6 +446,50 @@ legend, .field > span { display: block; margin-bottom: 10px; padding: 0; color: 
   .rtl .hero h1 { font-size: clamp(1.45rem, 5.8vw, 1.8rem); }
   .hero__line { font-size: .96rem; }
   .hero__button { width: 100%; min-height: 52px; margin-top: 6px; }
+
+  /* Collections: each collection is one compact frosted-glass card, like the home hero card: a
+     warm translucent ivory surface with a fine light border, blurring the same cream-to-sand
+     backdrop. The photo sits inside the shared rounded frame, above the glass, so it stays crisp,
+     beside the copy (mirrored by the grid in Arabic). The photo cell is at least 3:4 and grows
+     with the copy; the 2:3 crops fill it. */
+  .page--collections {
+    background:
+      radial-gradient(70% 34% at 10% 36%, rgba(196, 164, 51, .2), transparent 70%),
+      radial-gradient(64% 32% at 94% 70%, rgba(91, 46, 115, .13), transparent 72%),
+      linear-gradient(160deg, #f7efe3 0%, #efe3d2 55%, #e8dac8 100%);
+  }
+  .collections { grid-auto-rows: 1fr; gap: 14px; }
+  .collection-card {
+    --thumb: clamp(112px, 34vw, 172px);
+    --glass-shadow: inset 0 1px 0 rgba(255, 255, 255, .65), 0 14px 34px rgba(36, 16, 47, .1);
+    grid-template-columns: var(--thumb) minmax(0, 1fr); gap: 0; padding: 8px;
+    border: 1px solid rgba(255, 255, 255, .78); border-radius: 16px;
+    background: linear-gradient(150deg, rgba(255, 252, 247, .62), rgba(247, 239, 227, .5) 58%, rgba(236, 224, 208, .44));
+    -webkit-backdrop-filter: blur(18px) saturate(1.2);
+    backdrop-filter: blur(18px) saturate(1.2);
+    box-shadow: var(--glass-shadow);
+  }
+  .collection-card.is-pressed, .collection-card:focus-visible { box-shadow: var(--press-glow), var(--glass-shadow); }
+  .collection-card.is-pressed .collection-card__media,
+  .collection-card:focus-visible .collection-card__media { box-shadow: none; }
+  .collection-card__media {
+    position: relative; display: block; min-height: calc(var(--thumb) * 4 / 3);
+    overflow: hidden; border-radius: 10px; background: var(--sand);
+  }
+  .collection-card__media > :not(.collection-card__cover) { display: none; }
+  .collection-card__cover { position: absolute; inset: 0; }
+  .collection-card__cover img { height: 100%; aspect-ratio: auto; object-position: 50% 20%; }
+  .collection-card__body { gap: 6px; padding: 10px clamp(12px, 4vw, 20px); }
+  .collection-card__number { display: none; }
+  .collection-card__title { font-size: clamp(1.45rem, 4.2vw, 2rem); text-wrap: balance; }
+  .rtl .collection-card__title { font-size: clamp(1.1rem, 3.2vw, 1.5rem); line-height: 1.5; }
+  /* A shade darker than --muted for comfortable contrast on the glass, as in the hero. */
+  .collection-card__text { color: #5d5148; font-size: clamp(.86rem, 2vw, 1rem); line-height: 1.55; text-wrap: pretty; }
+  .rtl .collection-card__text { line-height: 1.75; }
+  .collection-card .text-link { margin-top: 4px; font-size: .86rem; }
+  @supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+    .collection-card { background: rgba(255, 252, 247, .9); }
+  }
 
   .modal-backdrop { padding: 0; place-items: stretch; }
   /* One scrolling sheet: photo, thumbnails, then the order form, each row sized to its content. */
@@ -421,11 +508,18 @@ legend, .field > span { display: block; margin-bottom: 10px; padding: 0; color: 
     grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 78%;
     width: calc(100% + 2 * var(--gutter)); margin-inline: calc(-1 * var(--gutter)); padding-inline: var(--gutter);
     overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gutter); scrollbar-width: none;
+    /* Room inside the scroller for a pressed or focused tile's lift, glow and outline. */
+    padding-block: var(--press-reach); margin-block: calc(-1 * var(--press-reach));
   }
   .detail-grid::-webkit-scrollbar { display: none; }
   .detail-tile { scroll-snap-align: start; }
   .values { justify-content: space-between; font-size: .8rem; }
   .values span + span::before { margin-inline: 10px; }
+}
+/* The English order label is wider, so below 460 px the brand name gives way to keep the logo,
+   language switch and order bag on one row; the logo itself carries the name. */
+@media (max-width: 459px) {
+  .ltr .brand-link__name { display: none; }
 }
 @media (max-width: 420px) {
   .brand-link__name { display: none; }
@@ -442,6 +536,7 @@ legend, .field > span { display: block; margin-bottom: 10px; padding: 0; color: 
   .collection-card:hover img { transform: none; }
 }
 @media (prefers-reduced-motion: reduce) {
+  :root { --press-lift: none; --press-lift-small: none; } /* pressed cards and links keep the glow but do not move */
   html { scroll-behavior: auto; }
   *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
 }

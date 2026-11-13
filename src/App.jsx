@@ -171,13 +171,29 @@ function InstagramBand({ t }) {
   )
 }
 
+// The whole card is one link. Desktop shows a strip of the collection's photos beside the copy; on
+// phones and tablets the card is one compact row, and the photo with a `phone` crop stands in for the
+// collection (a taller crop swapped in by <picture>) while the rest of the strip is hidden.
 function CollectionCard({ href, number, title, text, pictures, t }) {
   return (
     <a className="collection-card" href={href}>
       <span className={`collection-card__media collection-card__media--${pictures.length}`}>
-        {pictures.map(({ image, alt }) => (
-          <Picture key={image.src} image={image} alt={alt} sizes="(max-width: 899px) 31vw, 250px" />
-        ))}
+        {pictures.map(({ image, alt, phone }) => {
+          const photo = <Picture key={image.src} image={image} alt={alt} sizes="(max-width: 899px) 31vw, 250px" />
+          if (!phone) return photo
+          return (
+            <picture key={image.src} className="collection-card__cover">
+              <source
+                media="(max-width: 899px)"
+                srcSet={phone.srcSet}
+                sizes="(max-width: 329px) 112px, (max-width: 505px) 34vw, 172px"
+                width={phone.width}
+                height={phone.height}
+              />
+              {photo}
+            </picture>
+          )
+        })}
       </span>
       <span className="collection-card__body">
         <span className="collection-card__number">{number}</span>
@@ -391,11 +407,19 @@ function App() {
     if (page === 'collections') {
       const occasionPictures = products
         .filter((product) => product.category === 'occasion')
-        .map((product) => ({ image: product.gallery[0].image, alt: t.galleryAlt[product.code].main }))
+        .map((product) => ({
+          image: product.gallery[0].image,
+          alt: t.galleryAlt[product.code].main,
+          phone: product.code === 'A2' ? images.a2Cover : null,
+        }))
       const b2 = productByCode('B2')
-      const everydayPictures = b2.gallery.map((item) => ({ image: item.image, alt: t.galleryAlt.B2[item.view] }))
+      const everydayPictures = b2.gallery.map((item) => ({
+        image: item.image,
+        alt: t.galleryAlt.B2[item.view],
+        phone: item.view === 'main' ? images.b2Cover : null,
+      }))
       return (
-        <main className="page">
+        <main className="page page--collections">
           <header className="page-intro shell">
             <p className="eyebrow">{t.collectionsEyebrow}</p>
             <h1>{t.collectionsTitle}</h1>
