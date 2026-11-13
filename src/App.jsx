@@ -314,38 +314,24 @@ function App() {
 
   const activeFilter = collectionFilter === 'occasion' || collectionFilter === 'everyday' ? collectionFilter : null
   const filteredProducts = activeFilter ? products.filter((item) => item.category === activeFilter) : products
-  const heroProduct = productByCode('A2')
 
   const renderPage = () => {
     if (page === 'home') {
       return (
         <main className="page page--home">
-          <section className="hero shell">
-            <div className="hero__copy">
-              <p className="eyebrow">{t.heroEyebrow}</p>
-              <h1>{t.heroTitle}</h1>
-              <p className="lead">{t.heroText}</p>
-              <div className="actions">
-                <a className="button button--primary" href="#/new">{t.explore}</a>
-                <a className="button button--ghost" href="#/about">{t.aboutCta}</a>
+          <section className="hero" aria-labelledby="hero-title">
+            <div className="hero__inner shell">
+              <div className="hero__copy">
+                <h1 id="hero-title">{t.heroTitle}</h1>
+                <p className="hero__line">{t.heroText}</p>
+                <a className="button button--primary hero__button" href="#/new">{t.explore}</a>
               </div>
+              <figure className="hero__media">
+                {/* The lace keeps these files heavy, so phones ask for 82vw: most 3x phones load the
+                    960w file (still about 2.5x sharp) instead of the 1280w one. */}
+                <Picture image={images.heroB2} alt={t.heroAlt} sizes="(max-width: 899px) 82vw, 50vw" eager />
+              </figure>
             </div>
-            <figure className="hero__media">
-              <Picture image={images.a2Door} alt={t.heroAlt} sizes="(max-width: 899px) 100vw, 46vw" eager />
-              <figcaption>
-                <button
-                  type="button"
-                  className="media-chip"
-                  onClick={() => selectProduct(heroProduct, galleryIndex(heroProduct, 'full'))}
-                  aria-label={`${t.viewProduct(heroProduct.code)}, ${formatPrice(heroProduct.price)}`}
-                >
-                  <span className="media-chip__code">{heroProduct.code}</span>
-                  <span>{categoryLabel(heroProduct)}</span>
-                  <bdi>{formatPrice(heroProduct.price)}</bdi>
-                  <Arrow />
-                </button>
-              </figcaption>
-            </figure>
           </section>
 
           <section className="values shell" aria-label={t.valuesLabel}>

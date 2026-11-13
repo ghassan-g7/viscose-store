@@ -38,6 +38,9 @@ import b2Detail1080 from './assets/media/b2-detail-1080.webp'
 import b2Main240 from './assets/media/b2-main-240.webp'
 import b2Main640 from './assets/media/b2-main-640.webp'
 import b2Main1080 from './assets/media/b2-main-1080.webp'
+import heroB2640 from './assets/media/hero-b2-640.webp'
+import heroB2960 from './assets/media/hero-b2-960.webp'
+import heroB21280 from './assets/media/hero-b2-1280.webp'
 import a1Video from './assets/media/a1-video.mp4'
 import a1VideoPoster from './assets/media/a1-video-poster.webp'
 import a2Video from './assets/media/a2-video.mp4'
@@ -54,6 +57,7 @@ const picture = (variants, width, height) => ({
 })
 
 export const images = {
+  heroB2: picture([[heroB2640, 640], [heroB2960, 960], [heroB21280, 1280]], 1280, 1561),
   a1Detail: picture([[a1Detail240, 240], [a1Detail640, 640], [a1Detail1080, 1080]], 1080, 1350),
   a1Door: picture([[a1Door240, 240], [a1Door640, 640], [a1Door1080, 1080]], 1080, 1350),
   a1Fit: picture([[a1Fit240, 240], [a1Fit640, 640], [a1Fit975, 975]], 975, 1219),

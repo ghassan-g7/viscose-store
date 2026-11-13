@@ -46,6 +46,8 @@ it to each product. All files were made from copies of the original shoot files:
 | B1 | B1.HEIC (seated) | IMG_2668 (front), IMG_2668 (rope-cord yoke close-up) | — |
 | B2 | B2.HEIC (at the door) | IMG_2778 (panel, cuffs and lace) | IMG_2784 (0–4.45 s) |
 
-Editorial photos: the home hero is the A2 door shot (`a2-door`), and the About page uses IMG_2666 (`a1-door`).
+Editorial photos: the home hero is IMG_2776 (`hero-b2`, B2 mid-step at a wooden door, cropped from the
+shayla to the hem so the embroidered panel and the A-line silhouette both read), and the About page uses
+IMG_2666 (`a1-door`).
 
 The site is intentionally front-end only. Orders are passed to WhatsApp rather than stored in a backend database.

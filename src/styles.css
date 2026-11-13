@@ -85,7 +85,6 @@ h3 { font-size: 1.08rem; font-weight: 600; line-height: 1.3; }
   display: inline-flex; align-items: center; gap: 8px; width: max-content;
   padding-bottom: 3px; border-bottom: 1px solid currentColor; color: var(--plum); font-size: .9rem; font-weight: 500;
 }
-.actions { display: flex; flex-wrap: wrap; gap: 10px; }
 
 /* ---------- Announcement & header ---------- */
 .announcement {
@@ -124,19 +123,20 @@ h3 { font-size: 1.08rem; font-weight: 600; line-height: 1.3; }
   background: var(--plum); color: #fff; font-size: .72rem; font-weight: 600;
 }
 
-/* ---------- Home hero ---------- */
-.hero { display: grid; gap: 28px; padding-block: 20px 8px; }
-.hero__copy { display: grid; gap: 18px; align-content: center; justify-items: start; }
-.hero__copy .actions { margin-top: 6px; }
-.hero__media { position: relative; overflow: hidden; background: var(--cream); aspect-ratio: 4 / 5; }
-.hero__media img { width: 100%; height: 100%; object-fit: cover; }
-.media-chip {
-  position: absolute; inset-inline-start: 14px; bottom: 14px; display: inline-flex; align-items: center; gap: 10px;
-  padding: 9px 14px; border: 0; background: rgba(255, 253, 249, .93); color: var(--ink); font-size: .82rem;
-  box-shadow: 0 6px 20px rgba(36, 16, 47, .12); transition: background-color .2s ease;
-}
-.media-chip:hover { background: var(--white); }
-.media-chip__code { font-family: var(--font-display); font-size: 1.25rem; font-weight: 600; line-height: 1; }
+/* ---------- Home hero ----------
+   One cream "window": the garment photo and a short block of copy share a panel. On desktop the
+   photo takes half the panel at a near-portrait ratio, so the embroidery and the silhouette both
+   read, and the copy is centred in the other half. Phones stack photo then copy, with the button
+   inside the first screen. */
+.hero { padding-top: clamp(12px, 1.6vw, 24px); }
+.hero__inner { display: grid; background: var(--cream); overflow: hidden; }
+.hero__media { grid-row: 1; margin: 0; overflow: hidden; background: var(--sand); }
+.hero__media img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 0%; }
+.hero__copy { grid-row: 2; display: grid; justify-items: start; align-content: center; gap: 16px; }
+.hero h1 { font-size: clamp(2.3rem, 3.4vw, 3.25rem); line-height: 1.04; }
+.rtl .hero h1 { font-size: clamp(1.7rem, 2.5vw, 2.4rem); line-height: 1.35; }
+.hero__line { max-width: 27rem; color: var(--muted); font-size: 1.04rem; }
+.hero__button { margin-top: 8px; }
 
 .values {
   display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 0;
@@ -340,8 +340,12 @@ legend, .field > span { display: block; margin-bottom: 10px; padding: 0; color: 
 
 /* ---------- Desktop ---------- */
 @media (min-width: 900px) {
-  .hero { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(36px, 5vw, 80px); align-items: center; padding-block: 36px 8px; }
-  .hero__media { max-height: calc(100vh - 150px); }
+  .hero__inner { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; }
+  .hero__media { grid-column: 2; grid-row: 1; aspect-ratio: .92; max-height: 720px; }
+  .hero__copy {
+    grid-column: 1; grid-row: 1; justify-self: center; width: min(100%, 32rem);
+    padding: clamp(32px, 4vw, 64px) clamp(28px, 4vw, 56px);
+  }
   .order { grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); column-gap: clamp(40px, 6vw, 96px); align-items: start; }
   .order__heading { grid-row: span 2; }
   .order--steps-only { grid-template-columns: minmax(0, 46rem); }
@@ -368,7 +372,13 @@ legend, .field > span { display: block; margin-bottom: 10px; padding: 0; color: 
   .brand-link__name { font-size: 1.12rem; }
 
   .hero { padding-top: 0; }
-  .hero__media { order: -1; width: calc(100% + 2 * var(--gutter)); margin-inline: calc(-1 * var(--gutter)); max-height: 74vh; }
+  .hero__inner { width: 100%; }
+  .hero__media { height: clamp(250px, calc(100vh - 430px), 520px); height: clamp(250px, calc(100svh - 430px), 520px); }
+  .hero__copy { padding: 20px var(--gutter) 24px; gap: 10px; }
+  .hero h1 { font-size: clamp(1.9rem, 7.6vw, 2.4rem); }
+  .rtl .hero h1 { font-size: clamp(1.45rem, 5.8vw, 1.8rem); }
+  .hero__line { font-size: .96rem; }
+  .hero__button { width: 100%; min-height: 52px; margin-top: 6px; }
 
   .modal-backdrop { padding: 0; place-items: stretch; }
   /* One scrolling sheet: photo, thumbnails, then the order form, each row sized to its content. */
