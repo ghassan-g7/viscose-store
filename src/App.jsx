@@ -419,7 +419,7 @@ function App() {
         phone: item.view === 'main' ? images.b2Cover : null,
       }))
       return (
-        <main className="page">
+        <main className="page page--collections">
           <header className="page-intro shell">
             <p className="eyebrow">{t.collectionsEyebrow}</p>
             <h1>{t.collectionsTitle}</h1>
