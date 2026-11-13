@@ -13,10 +13,12 @@ Front-end storefront for **Viscose Design**, focused on occasion and everyday mu
 - Product details with a photo gallery; A1, A2 and B2 also have a video that plays silently on a loop after "Watch video"
 - Order bag that sends the complete order to WhatsApp
 - Instagram link
-- Responsive layout for desktop and mobile
-- Touch feedback: product, collection and close-up cards lift slightly with a warm glow while a
-  finger rests on them (`src/press-feedback.js`); the glow alone with reduced motion, and the same
-  glow with an outline for keyboard focus
+- Responsive layout for desktop and mobile; on phones and tablets the header keeps the logo,
+  language switch and order bag on one row, with all six page links in a three-by-two grid below
+- Touch feedback (`src/press-feedback.js`): the moment a finger touches a product, collection or
+  close-up card, a header page link or a filter chip, it lifts slightly with a soft gold glow, which
+  clears on release or as soon as the touch becomes a scroll; the glow alone with reduced motion,
+  and the same glow with an outline for keyboard focus on cards
 
 ## Run locally
 
