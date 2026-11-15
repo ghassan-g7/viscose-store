@@ -60,4 +60,10 @@ single photo, a taller 2:3 crop at 320 and 480 px wide: `a2-cover` (the IMG_2724
 `b2-cover` (B2.HEIC, closer on the garment, from the scarf to below the knee) for Everyday. Desktop
 keeps the full photo strips.
 
+Favicons (`public/favicon.ico` with 16, 32 and 48 px, `favicon-16x16.png`, `favicon-32x32.png`) show
+the plum monogram from the header logo (`src/logoData.js`) on the brand's gold, so the icon stays
+visible on light and dark browser tabs. The lettering is left out at these sizes, and at 16 px the
+gap it leaves is closed so the monogram reads as one shape. `apple-touch-icon.png` (180 px) carries
+the full mark with the lettering.
+
 The site is intentionally front-end only. Orders are passed to WhatsApp rather than stored in a backend database.
