@@ -62,8 +62,10 @@ keeps the full photo strips.
 
 Favicons (`public/favicon.ico` with 16, 32 and 48 px, `favicon-16x16.png`, `favicon-32x32.png`) show
 the plum monogram from the header logo (`src/logoData.js`) on the brand's gold, so the icon stays
-visible on light and dark browser tabs. The lettering is left out at these sizes, and at 16 px the
-gap it leaves is closed so the monogram reads as one shape. `apple-touch-icon.png` (180 px) carries
-the full mark with the lettering.
+visible on light and dark browser tabs. The lettering is left out at these sizes, and the strokes it
+interrupted are reconnected along their own direction and weight (straight for the arms and the
+crossing stroke, a matching curve for the swash), so the monogram reads as one continuous shape;
+the 16 px icon uses slightly heavier strokes so the thin ones hold up. `apple-touch-icon.png`
+(180 px) carries the full mark with the lettering.
 
 The site is intentionally front-end only. Orders are passed to WhatsApp rather than stored in a backend database.
